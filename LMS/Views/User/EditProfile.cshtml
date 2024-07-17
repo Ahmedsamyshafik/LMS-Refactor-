@@ -1,0 +1,52 @@
+﻿@model LMS.ViewModels.User.EditProfileVM
+
+@{
+    ViewData["Title"] = "EditmyAcc";
+    Layout = "_Layout";
+}
+
+
+
+<head>
+
+    <link rel="stylesheet" href="~/css/edit-prof.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/all.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <title>تعديل البروفايل</title>
+</head>
+<body>
+
+    <div class="edit-parent">
+        <img src="~/assets/images/Front/edit.png" alt=" " />
+        <div class="form">
+            <h3> تعديل</h3>
+            <form method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="edit">
+                    <!-- <label for="name">Name</label> -->
+                    <input type="text" name="name" id="name" value="@Model.Name" asp-for="@Model.Name" placeholder="الاسم">
+
+                </div>
+                <div class="edit">
+                    <!-- <label for="name">Name</label> -->
+                    <input type="text" name="Phone" id="number" value="@Model.Phone" asp-for="@Model.Phone" placeholder="رقم التليفون">
+                </div>
+             
+
+                <button type="submit">Save</button>
+
+            </form>
+            <a asp-action="ChangePassword">Change Password</a>
+        </div>
+    </div>
+</body>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

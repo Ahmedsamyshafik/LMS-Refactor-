@@ -1,0 +1,45 @@
+﻿@model List<LMS.Models.Entities.Material>
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/pdf.css">
+    <link rel="stylesheet" href="~/css/edit.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/all.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css.map">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Table Of PDFs</h2>
+        <table id="pdfTable" border="1">
+
+            @if (Model.Any() )
+            {
+                @for (var i = 0; i < Model.Count(); i++)
+                {
+                    <tr>
+                        <th>
+                            <a asp-action="DisplayMaterial" asp-route-id=" @Model.ElementAt(i).Id" target="_blank">@Model.ElementAt(i).Name</a>
+
+                        </th>
+                    </tr>
+
+                }
+            }
+
+
+        </table>
+    </div>
+
+    <script src="~/js/pdf.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+</body>
+

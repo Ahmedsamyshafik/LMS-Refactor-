@@ -1,0 +1,80 @@
+﻿@model LMS.ViewModels.Account.LoginVM
+
+@{
+	ViewData["Title"] = "Login";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>تسجيل الدخول</title>
+	<link rel="stylesheet" href="~/css/login.css">
+	<link rel="stylesheet" href="~/css/pdf.css">
+	<link rel="stylesheet" href="~/css/edit-prof.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Noto+Sans+Arabic:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="~/css/all.min.css">
+	<link rel="stylesheet" href="~/css/bootstrap.min.css">
+</head>
+<body>
+
+	<div class="parent-container-login">
+		<img src="~/assets/images/Front/photo-login.jpg" alt="photo" />
+		<section class="container-login">
+			@* LOGIN Model *@
+			<div class="form-parent-login">
+				<form asp-action="Login" method="post">
+					<h1>تسجيل الدخول</h1>
+					<div asp-validation-summary="All" class="text-danger"></div>
+					<div class="input-box">
+						<input type="text" placeholder="الايميل " asp-for="@Model.Email" name="Email" required>
+						<span asp-validation-for="@Model.Email" class="text-danger"></span>
+						<i class="fa-regular fa-envelope "></i>
+					</div>
+
+					<div class="input-box">
+						<input type="password" asp-for="@Model.Password" name="Password" id="passlog" placeholder="كلمة المرور" required>
+						<span asp-validation-for="@Model.Password" class="text-danger"></span>
+						<i class="fa-solid fa-lock"></i>
+						<i class="fa-regular fa-eye-slash"></i>
+
+					</div>
+	
+
+					<div class="after-password">
+						<span class="remember">
+							<input type="checkbox" asp-for="@Model.RememberMe" name="UserAccount.RememberMe" id="checkbox">
+
+							<label for="checkbox">تذكرني</label>
+						</span>
+					</div>
+
+					<button type="submit" class="loginNow">تسجيل الدخول</button>
+
+					<div class="sign">
+						ليس لديك حساب؟ <a asp-action="Register" asp-controller="Account" id="signup">انشاء حساب </a>
+					</div>
+
+				</form>
+			</div>
+
+			
+		</section>
+	</div>
+
+	<script src="~/js/login.js"></script>
+	@section Scripts {
+		@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+</body>
+</html>

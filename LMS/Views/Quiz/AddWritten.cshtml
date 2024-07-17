@@ -1,0 +1,39 @@
+﻿@model AddWritten
+@{
+    ViewData["Title"] = "AddWrittenQuiz";
+}
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/pdf.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Noto+Sans+Arabic:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/all.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <title>مقالي</title>
+</head>
+<body>
+    <form class="addQuiz" method="post"  enctype="multipart/form-data">
+        <input type="file" asp-for="@Model.file" name="file" class="form-control" placeholder="ve" accept="application/pdf">
+        <input type="text" asp-for="@Model.Name" name="Name" class="rounded-2 form-control" placeholder="File Name">
+        <input type="text" asp-for="@Model.description" name="description" class="rounded-2 form-control" placeholder="File Description">
+        <input asp-for="@Model.CourseId" name="CourseId" hidden />
+     
+        
+        <button id="saveButton" type="submit" class="btn fw-bold">Save</button>
+        <br />
+       
+    </form>
+
+
+
+    <script src="~/js/pdf.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js.map"></script>
+</body>

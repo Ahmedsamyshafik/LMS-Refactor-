@@ -1,0 +1,48 @@
+﻿@model IEnumerable< LMS.ViewModels.Course.GetCourseVM>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="container ">
+    <div class="lectures">
+        @foreach (var item in Model)
+        {
+            <div class="one">
+                <img src="~/@item.imgPath" alt="">
+                <div class="hov"></div>
+                <div class="title">
+                    <a asp-action="detail"  asp-controller="Course" asp-route-id="@item.Id">
+                        <h3>@item.Name</h3>
+                        @if (item.Price > 0)
+                        {
+                            <h4>@item.Price</h4>
+
+                        }
+                        <p>تفاصيل</p>
+                    </a>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>
+
+
+<div class="add">
+    <div class="card ">
+        <img src="~/assets/images/Front/teacher.png" alt=" ">
+        <h3>Eng:Ahmed Samy</h3>
+    </div>
+
+    <i class="fa-solid fa-circle-plus"></i>
+    <a asp-action="GetAll" asp-controller="Course">الكورسات</a>
+    <a asp-action="GetAll" asp-controller="CourseRequest">طلبات الكورسات</a>
+    <a asp-action="GetAll" asp-controller="CourseStudent">طلاب الكورسات</a>
+    <a asp-action="Add" asp-controller="Course">إضافه كورس</a>
+</div>

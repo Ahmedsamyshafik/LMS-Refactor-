@@ -1,0 +1,34 @@
+﻿@model LMS.ViewModels.Course.GetCourseVM
+@{
+    ViewData["Title"] = "Detail";
+}
+
+<h1>Detail</h1>
+
+<form>
+    <div class="input-box">
+        <h2>@Model.Name</h2>
+        <p>@Model.Description</p>
+        @if (Model.Price != 0)
+        {
+            <p>
+                Model.Price
+            </p>
+        }
+        else
+        {
+            <p>Free</p>
+        }
+        <img src="~/@Model.imgPath" width="200" height="200" />
+        @if (Model.CanEnroll)
+        {
+            <a asp-action="index" asp-controller="Course" asp-route-id="@Model.Id" class="btn btn-primary">Go To Course</a>
+
+        }
+        else
+        {
+            <a asp-action="Enroll" asp-controller="CourseRequest" asp-route-id="@Model.Id" class="btn btn-primary">Enroll</a>
+        }
+
+    </div>
+</form>

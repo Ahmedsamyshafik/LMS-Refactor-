@@ -1,0 +1,69 @@
+﻿@model List<StudentQuiz>
+
+@{
+	ViewData["Title"] = "Correcting";
+}
+
+<h1>Correcting</h1>
+<form method="post" >
+	<table class="table table-bordered table-striped" style="width:90%">
+		<thead>
+			<tr>
+				<th>
+					Student Name
+				</th>
+				<th>
+					Exam Name
+				</th>
+				<th>
+					Solution
+				</th>
+				<th>
+					Exam Degree
+				</th>
+				<th>
+					Max Degree
+				</th>
+			</tr>
+
+		</thead>
+		<tbody>
+			@if (Model.Count > 0)
+			{
+				@for (var i = 0; i < Model.Count(); i++)
+				{
+					<tr>
+						<td width="20%">
+							<input asp-for="@Model.ElementAt(i).Student.Name" name="correctquiz[@i].Student.Name" disabled>
+							<input asp-for="@Model.ElementAt(i).Student.Name" name="correctquiz[@i].Student.Name" hidden>
+
+						</td>
+						<td width="20%">
+							<input asp-for="@Model.ElementAt(i).Quiz.Name" name="correctquiz[@i].Quiz.Name" disabled>
+							<input asp-for="@Model.ElementAt(i).Quiz.Name" name="correctquiz[@i].Quiz.Name" hidden>
+
+
+						</td>
+						<td width="20%">
+							<input asp-for="@Model.ElementAt(i).Id" name="correctquiz[@i].Id" hidden>
+							<input asp-for="@Model.ElementAt(i).QuizId" name="correctquiz[@i].QuizId" hidden>
+							<input asp-for="@Model.ElementAt(i).CourseId" name="correctquiz[@i].CourseId" hidden>
+							<input asp-for="@Model.ElementAt(i).StudentAnswerPath" name="correctquiz[@i].StudentAnswerPath" hidden>
+							<input asp-for="@Model.ElementAt(i).StudentId" name="correctquiz[@i].StudentId" hidden>
+							<a asp-action="DisplayPdf" asp-route-id="@Model.ElementAt(i).Id">FILE</a>
+						</td>
+						<td width="20%">
+							<input asp-for="@Model.ElementAt(i).ExamDegree" name="correctquiz[@i].ExamDegree">
+						</td>
+						<td width="20%">
+							<input asp-for="@Model.ElementAt(i).MaxDegree" name="correctquiz[@i].MaxDegree">
+
+						</td>
+					</tr>
+				}
+
+			}
+		</tbody>
+	</table>
+	<button type="submit" class="btn btn-success">Save</button>
+</form>

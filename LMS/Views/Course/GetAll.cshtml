@@ -1,0 +1,121 @@
+﻿@model IEnumerable<LMS.ViewModels.Course.GetAllCoursesForAdminVM>
+
+@{
+    ViewData["Title"] = "MyStudents";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    input[type=text] {
+        width: 150px;
+        padding: 5px;
+    }
+
+    select {
+        padding: 5px;
+    }
+
+    input[type=submit] {
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+
+    <form id="searchForm">
+        <label for="name">Search by Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter name...">
+        <input type="submit" value="Search">
+    </form>
+
+    <table id="studentTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>pic</th>
+                <th>students</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <form method="post">
+
+                @foreach (var item in Model)
+                {
+
+                <tr>
+                    <td hidden>
+                            @item.Id
+                    </td>
+                    <td>
+                            @item.Name
+                    </td>
+                    <td>
+                            @item.Price
+                    </td>
+                    <td>
+                        <img src="~/@item.imgPath" height="100" width="100" />
+                    </td>
+                    <td>
+                            @item.studentsIn
+                    </td>
+                    <td>
+                        <button type="submit" asp-action="Delete" asp-controller="Course" asp-route-id="@item.Id" class="btn btn-danger">Delete</button>
+
+                    </td>
+                </tr>
+                }
+            </form>
+
+        </tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('searchForm');
+        const table = document.getElementById('studentTable');
+
+        form.addEventListener('input', function (e) {
+            const nameInput = document.getElementById('name');
+            const degreeInput = document.getElementById('degree');
+
+            const nameFilter = nameInput.value.toLowerCase();
+            const degreeFilter = degreeInput.value.toLowerCase();
+
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const name = rows[i].getElementsByTagName('td')[0].innerText.toLowerCase();
+                const degree = rows[i].getElementsByTagName('td')[1].innerText.toLowerCase();
+
+                if ((nameFilter === '' || name.includes(nameFilter)) &&
+                    (degreeFilter === '' || degree === degreeFilter)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    </script>
+
+
+
+</body>

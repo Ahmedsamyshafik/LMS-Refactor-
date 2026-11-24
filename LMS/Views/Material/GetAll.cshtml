@@ -27,12 +27,18 @@
                 {
                     <tr>
                         <th>
-                            <a asp-action="DisplayMaterial" asp-route-id=" @Model.ElementAt(i).Id" target="_blank">@Model.ElementAt(i).Name</a>
+                            <a asp-action="DisplayMaterial" asp-route-id="@Model.ElementAt(i).Id" target="_blank" rel="noopener">@Model.ElementAt(i).Name</a>
 
                         </th>
                     </tr>
 
                 }
+            }
+            else
+            {
+                <tr>
+                    <td>لا توجد ملزومات منشورة لهذه المادة بعد.</td>
+                </tr>
             }
 
 

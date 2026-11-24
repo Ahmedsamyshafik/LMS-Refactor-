@@ -1,28 +1,25 @@
-﻿@model IEnumerable< LMS.ViewModels.Course.GetCourseVM>
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _usermanager
+@inject Microsoft.Extensions.Options.IOptions<LMS.Models.Settings.SiteSettings> SiteOptions
+@model IEnumerable< LMS.ViewModels.Course.GetCourseVM>
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<img src="~/assets/images/Front/mainImg.jpg" width=100% height="310px" alt=" صورة المنصة الرئيسية" />
 
 <div class="container ">
     <div class="lectures">
         @foreach (var item in Model)
         {
             <div class="one">
-                <img src="~/@item.imgPath" alt="">
+                <img src="~/@item.imgPath" alt="شعار كورس @item.Name">
                 <div class="hov"></div>
                 <div class="title">
-                    <a asp-action="detail"  asp-controller="Course" asp-route-id="@item.Id">
+                    <a asp-action="detail" asp-controller="Course" asp-route-id="@item.Id">
                         <h3>@item.Name</h3>
-                        @if (item.Price > 0)
-                        {
-                            <h4>@item.Price</h4>
-
-                        }
+                        <h4>@PriceFormatter.Format(item.Price)</h4>
                         <p>تفاصيل</p>
                     </a>
                 </div>
@@ -33,16 +30,62 @@
     </div>
 </div>
 
+@{
+    if (User.Identity.IsAuthenticated)
+    {
+        var claimsIdentity = (ClaimsIdentity)User.Identity;
+        var uId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var user = await _usermanager.FindByIdAsync(uId);
+        if (user != null)
+        {
+            if( await _usermanager.IsInRoleAsync(user, "Admin"))
+            {
+                <div class="add">
+                    <div class="card ">
+                        <img src="~/assets/images/Front/zoz.jpg" alt="صورة حساب المشرف" />
+                        <h3>@SiteOptions.Value.InstructorName</h3>
+                    </div>
 
-<div class="add">
-    <div class="card ">
-        <img src="~/assets/images/Front/teacher.png" alt=" ">
-        <h3>Eng:Ahmed Samy</h3>
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <a asp-action="GetAll" asp-controller="Course">الكورسات</a>
+                    <a asp-action="GetAll" asp-controller="CourseRequest">طلبات الكورسات</a>
+                    <a asp-action="GetAll" asp-controller="CourseStudent">طلاب الكورسات</a>
+                    <a asp-action="Add" asp-controller="Course">إضافه كورس</a>
+                </div>
+            }
+
+        }
+
+    }
+}
+
+
+
+<div class="about">
+    <div class="container">
+
+        <h3>عن @SiteOptions.Value.InstructorName</h3>
+        <div class="image-about">
+            <img src="~/assets/images/Front/my_pic.jpg" height="60px" width="73px" alt="صورة @SiteOptions.Value.InstructorName">
+            <p>مدرس  خبير لغة c#</p>
+            <i class="bi bi-whatsapp"></i>
+            <div class="logo">
+                <a href="#">
+                    <i class="fa-brands fa-facebook"></i>
+                    <span class="name">facebook</span>
+                </a>
+
+                <a href="#">
+                    <i class="fa-brands fa-youtube"></i>
+                    <span class="name">youtube</span>
+                </a>
+
+                <a href="">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span class="name">whatsapp</span>
+                </a>
+            </div>
+        </div>
+        <p class="text">الأستاذ أحمد عصام هو مدرس رياضيات للمرحلة الثانوية، يتمتع بخبرة طويلة في تعليم الطلاب وتبسيط المفاهيم الرياضية المعقدة بأسلوب سلس وسهل الفهم. يتميز أحمد بقدرته على تحفيز الطلاب وتطوير مهاراتهم في حل المشكلات، مما ينعكس إيجابياً على نتائجهم الأكاديمية. بفضل شغفه بالتعليم وحرصه على تطوير ذاته، يستخدم أحمد أحدث الأساليب التعليمية لضمان تحقيق أفضل النتائج.</p>
     </div>
-
-    <i class="fa-solid fa-circle-plus"></i>
-    <a asp-action="GetAll" asp-controller="Course">الكورسات</a>
-    <a asp-action="GetAll" asp-controller="CourseRequest">طلبات الكورسات</a>
-    <a asp-action="GetAll" asp-controller="CourseStudent">طلاب الكورسات</a>
-    <a asp-action="Add" asp-controller="Course">إضافه كورس</a>
 </div>

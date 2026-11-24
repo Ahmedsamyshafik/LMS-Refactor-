@@ -9,6 +9,8 @@ namespace LMS.Models.Entities
         public string Description { get; set; }
         public string? FilePath { get; set; }
 
+        public int DurationMinutes { get; set; }
+
         [ForeignKey(nameof(courseId))]
         public int courseId { get; set; }
         public Course Course { get; set; }

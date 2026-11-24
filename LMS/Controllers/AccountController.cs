@@ -1,5 +1,6 @@
 ﻿using LMS.Service.Abstract;
 using LMS.ViewModels.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -27,6 +28,7 @@ namespace LMS.Controllers
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterVM registerVM)
         {
             if (ModelState.IsValid)
@@ -47,6 +49,7 @@ namespace LMS.Controllers
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginVM loginVM)
         {
             if (ModelState.IsValid)
@@ -69,6 +72,18 @@ namespace LMS.Controllers
             return RedirectToAction("Login");
         }
 
+        /// <summary>
+        /// Final page for a forbidden request. It answers 403 itself, otherwise a refusal looks like an
+        /// ordinary successful page.
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            Response.StatusCode = StatusCodes.Status403Forbidden;
+            return View();
+        }
+
 
         #endregion
 
@@ -76,8 +91,9 @@ namespace LMS.Controllers
         #region Private
         private string GetUserId()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claimsIdentity = ((ClaimsIdentity)User.Identity);
             var uId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
             if (uId == null) return string.Empty;
             return uId.Value;
         }

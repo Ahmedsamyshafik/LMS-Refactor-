@@ -70,10 +70,10 @@
                             @item.Name
                     </td>
                     <td>
-                            @item.Price
+                            @PriceFormatter.Format(item.Price)
                     </td>
                     <td>
-                        <img src="~/@item.imgPath" height="100" width="100" />
+                        <img src="~/@item.imgPath" height="100" width="100" alt="صورة كورس @item.Name" />
                     </td>
                     <td>
                             @item.studentsIn

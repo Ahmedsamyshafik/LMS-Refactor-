@@ -1,10 +1,12 @@
 ﻿using LMS.Service.Abstract;
 using LMS.ViewModels.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace LMS.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         #region Fields
@@ -23,6 +25,7 @@ namespace LMS.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditProfile()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -32,6 +35,8 @@ namespace LMS.Controllers
             return View(vm);
         }
         [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(EditProfileVM editProfileVM)
         {
             if (ModelState.IsValid)
@@ -47,11 +52,14 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
         [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordVM changePasswordVM)
         {
             if (ModelState.IsValid)

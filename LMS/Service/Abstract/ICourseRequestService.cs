@@ -8,5 +8,6 @@ namespace LMS.Service.Abstract
         Task<List<GetAllCoursesRequestsVM>> GetAll();
         Task<string> Accept(int id);
         Task<string> Delete(int id);
+        bool checkEnrolmentStatus(string userId, int courseId);
     }
 }

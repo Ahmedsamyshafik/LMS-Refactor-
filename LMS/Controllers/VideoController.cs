@@ -1,9 +1,11 @@
 ﻿using LMS.Models.Entities;
 using LMS.Service.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS.Controllers
 {
+    [Authorize]
     public class VideoController : Controller
     {
         #region Fields
@@ -19,6 +21,8 @@ namespace LMS.Controllers
 
         #region Actions
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add([Bind("Name,VideoPath,CourseId")] Video video)
         {
             await _videoService.Add(video);
@@ -26,6 +30,8 @@ namespace LMS.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             await _videoService.Delete(id);

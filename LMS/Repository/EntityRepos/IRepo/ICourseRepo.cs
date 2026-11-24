@@ -5,6 +5,8 @@ namespace LMS.Repository.EntityRepos.IRepo
 {
     public interface ICourseRepo : IGenericRepositoryAsync<Course>
     {
+        //solid 
+
 
     }
 }

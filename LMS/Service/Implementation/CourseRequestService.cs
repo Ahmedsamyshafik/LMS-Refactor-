@@ -1,4 +1,5 @@
-﻿using LMS.Models.Entities;
+﻿using LMS.Helper;
+using LMS.Models.Entities;
 using LMS.Repository.EntityRepos.IRepo;
 using LMS.Service.Abstract;
 using LMS.ViewModels.CourseRequest;
@@ -72,9 +73,10 @@ namespace LMS.Service.Implementation
                 var course = _courseService.GetById(item.CourseId);
                 var temp = new GetAllCoursesRequestsVM()
                 {
-                    CourseName = course.Name,
+                    CourseName = course?.Name ?? string.Empty,
                     StudentName = await _authService.GetUserNameById(item.UserId),
-                    CoursePrice = course.Price.ToString(),
+                    CoursePrice = course == null ? string.Empty : PriceFormatter.Format(course.Price),
+                    CourseId = item.CourseId,
                     Id = item.Id,
                     Time = item.Time
                 };
@@ -111,6 +113,16 @@ namespace LMS.Service.Implementation
             await _courseStudentService.Add(CourseStudent);
             await _courseRequestRepo.DeleteAsync(CR);
             return "Success";
+        }
+
+        public bool checkEnrolmentStatus(string userId, int courseId)
+        {
+            var res = _courseRequestRepo.GetTableNoTracking().Where(x => x.UserId == userId && x.CourseId == courseId).FirstOrDefault();
+            if (res != null)
+            {
+                return false; // pending
+            }
+            return true;
         }
 
         #endregion

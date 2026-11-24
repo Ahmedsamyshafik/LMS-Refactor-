@@ -17,15 +17,28 @@
     <link rel="stylesheet" href="~/css/bootstrap.min.css.map">
 </head>
 <body>
-    <form class="addQuiz " method="post" enctype="multipart/form-data">
-        
-        <input type="file" class="form-control" asp-for="@Model.file" placeholder="ve" accept="application/pdf">
-        <input type="text" class="rounded-2 form-control" name="Name" asp-for="@Model.Name" placeholder="File Name">
-        <input value="@ViewBag.Courseid"asp-for="@Model.CourseId"  hidden />
+    @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+    {
+        <form class="addQuiz " method="post" asp-action="Add" asp-controller="Material" enctype="multipart/form-data">
 
-        <button type="submit" asp-controller="material" asp-action="Add" asp-route-id="@ViewBag.Courseid" id="saveButton" class="btn fw-bold">Save</button> <br />
-       
-    </form>
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <label for="file">الملف (PDF فقط):</label>
+            <input type="file" id="file" class="form-control" asp-for="@Model.file" placeholder="ve" accept="application/pdf" required>
+
+            <label for="Name">اسم الملف:</label>
+            <input type="text" id="Name" class="rounded-2 form-control" name="Name" asp-for="@Model.Name" placeholder="File Name" required>
+
+            <input value="@ViewBag.Courseid" asp-for="@Model.CourseId" hidden />
+
+            <button type="submit" id="saveButton" class="btn fw-bold">Save</button> <br />
+
+        </form>
+    }
+    else
+    {
+        <p class="container py-3">هذه الصفحة مخصصة للمشرفين والمدرسين فقط.</p>
+    }
 
 
 

@@ -11,5 +11,9 @@ namespace LMS.ViewModels.QuizVM
     public class inhertQuiz : Quiz
     {
         public bool StudentTakedExam { get; set; }
+
+        public int? StudentDegree { get; set; }
+
+        public int? StudentMaxDegree { get; set; }
     }
 }

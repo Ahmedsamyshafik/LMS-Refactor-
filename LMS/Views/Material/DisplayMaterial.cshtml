@@ -6,6 +6,13 @@
 <h1>DisplayMaterial</h1>
 
 
-<div class="pdf-container container" style="width: 100%; height: 100vh;">
-    <embed src="~/@Model.PdfPath" type="application/pdf" width="100%" height="100%">
-</div>
+@if (!string.IsNullOrEmpty(Model.PdfPath))
+{
+    <div class="pdf-container container" style="width: 100%; height: 100vh;">
+        <embed src="~/@Model.PdfPath" type="application/pdf" width="100%" height="100%">
+    </div>
+}
+else
+{
+    <p class="container py-3">هذا الملف غير متاح.</p>
+}

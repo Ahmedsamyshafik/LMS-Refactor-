@@ -8,7 +8,9 @@ namespace LMS.Service.Abstract
         bool StudentInCourse(int courseId, string userid);
         Task Add(CourseStudent obj);
         Task<List<GetAllCoursesRequestsVM>> GetAll();
+        List<GetAllCoursesRequestsVM> GetByStudentId(string userId);
         Task<string> Delete(int id);
         int GetStudentsCountInCourseById(int id);
+        Task<CourseStudent> GetById(int id);
     }
 }

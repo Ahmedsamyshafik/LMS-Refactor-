@@ -1,4 +1,7 @@
-﻿@model GetAllVM
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _usermanager
+@model GetAllVM
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,8 +22,29 @@
     <div class="scroll">
         <i class="fa-solid fa-arrow-down-long scrolling"></i>
     </div>
+    @if (TempData["QuizMessage"] is string message)
+    {
+        <div class="container" role="status">@message</div>
+    }
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var uId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _usermanager.FindByIdAsync(uId);
+            if (user != null)
+            {
+                if (await _usermanager.IsInRoleAsync(user, "Admin"))
+                {
+                    <a asp-action="CorrectWritten" asp-route-id="@ViewBag.CourseId" class="btn btn-danger">تصحيح المقالي</a>
 
-    <a asp-action="CorrectWritten" asp-route-id="@Model.quizzes.FirstOrDefault().courseId" class="btn btn-danger">تصحيح المقالي</a>
+                }
+
+            }
+
+        }
+    }
+
 
     <div id="quizLinks" class="container">
         <form method="post" asp-action="QuizAccess">
@@ -34,7 +58,13 @@
                     @if (item.StudentTakedExam)
                     {
                         <p>you did this exam before </p>
-                        <a asp-action="Get" asp-route-id="@item.Id">Click</a>
+                        @if (item.StudentDegree.HasValue)
+                        {
+                            <p>
+                                الدرجة: @item.StudentDegree / @(item.StudentMaxDegree ?? 0)
+                            </p>
+                        }
+                        <a asp-action="Result" asp-route-id="@item.Id">النتيجة</a>
 
                     }
                     else
@@ -49,53 +79,71 @@
 
         </form>
 
-
-
-    </div>
-
-
-
-
-
-    <div class="listoftable container">
-        <form id="searchForm">
-            <label for="name" class="h2 ">Search by Name</label>
-            <input type="text" id="name" name="name" placeholder="Enter name...">
-
-
-
-
-
-
-            <input type="submit" value="Search" class="sub">
-        </form>
-
-        <table id="studentTable" class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Exam Name</th>
-                    <th scope="col">Exam Degree</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @for (int i = 0; i < Model.students.Count(); i++)
+        @{
+            if (User.Identity.IsAuthenticated)
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var uId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var user = await _usermanager.FindByIdAsync(uId);
+                if (user != null)
                 {
-                    <tr>
-                        <td>@Model.students.ElementAt(i).Student.Name</td>
-                        <td>@Model.students.ElementAt(i).Quiz.Name</td>
-                        <td>@Model.students.ElementAt(i).ExamDegree / @Model.students.ElementAt(i).MaxDegree  </td>
-                    </tr>
+                    if (await _usermanager.IsInRoleAsync(user, "Admin"))
+                    {
+                        <div class="listoftable container">
+                            <form id="searchForm">
+                                <label for="name" class="h2 ">Search by Name</label>
+                                <input type="text" id="name" name="name" placeholder="Enter name...">
+
+
+
+
+
+
+                                <input type="submit" value="Search" class="sub">
+                            </form>
+
+                            <table id="studentTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Exam Name</th>
+                                        <th scope="col">Exam Degree</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @for (int i = 0; i < Model.students.Count(); i++)
+                                    {
+                                        <tr>
+                                            <td>@Model.students.ElementAt(i).Student.Name</td>
+                                            <td>@Model.students.ElementAt(i).Quiz.Name</td>
+                                            <td>@Model.students.ElementAt(i).ExamDegree / @Model.students.ElementAt(i).MaxDegree  </td>
+                                        </tr>
+                                    }
+
+
+
+
+                                    <!-- Add more rows here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                    }
+
                 }
 
+            }
+        }
 
 
 
-                <!-- Add more rows here -->
-            </tbody>
-        </table>
     </div>
+
+
+
+
+
 
 
 

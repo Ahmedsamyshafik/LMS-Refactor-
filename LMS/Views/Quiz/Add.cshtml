@@ -21,15 +21,21 @@
         <h1>Create Quiz</h1>
         <form method="post" >
 
+            <div asp-validation-summary="All" class="text-danger"></div>
+
             <div class="form-group">
                 <div class="sele p-3">
 
                     
-                    <a asp-action="AddWritten" asp-route-id="@ViewBag.id " class="btn btn-danger border">اضافه امتحان مقالي</a>
+                    <a asp-action="AddWritten" asp-route-id="@ViewBag.id" class="btn btn-danger border">اضافه امتحان مقالي</a>
                 </div>
                 <label for="title">Title:</label>
                 <input asp-for="@Model.courseId" value="@ViewBag.id" name="courseId" hidden />
                 <input type="text" asp-for="@Model.Name" name="Name" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="durationMinutes">مدة الامتحان (بالدقائق):</label>
+                <input type="number" id="durationMinutes" asp-for="@Model.DurationMinutes" name="DurationMinutes" class="form-control" min="1" max="600" value="60" required />
             </div>
             <div class="form-group">
                 <label for="description">Description:</label>
@@ -60,5 +66,7 @@
             <button type="submit" asp-route-Id="@ViewBag.id" class="btn " id="createQuizBtn">Create Quiz</button>
         </form>
     </div>
-    <script src="~/js/examMcq.js"></script>
+
 </body>
+<script src="~/js/examMcq.js"></script>
+<script src="~/js/exam.js"></script>

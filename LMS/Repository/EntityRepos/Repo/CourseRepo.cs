@@ -13,5 +13,7 @@ namespace LMS.Repository.EntityRepos.Repo
         {
             courses = db.Set<Course>();
         }
+
+
     }
 }

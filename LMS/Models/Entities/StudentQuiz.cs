@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using LMS.Models.Enums;
 
 namespace LMS.Models.Entities
 {
@@ -8,6 +9,10 @@ namespace LMS.Models.Entities
         public int MaxDegree { get; set; }
         public int ExamDegree { get; set; }
         public string? StudentAnswerPath { get; set; }
+
+        public ExamAttemptStatus Status { get; set; }
+        public DateTime? StartedAtUtc { get; set; }
+        public DateTime? SubmittedAtUtc { get; set; }
 
         [ForeignKey(nameof(Student))]
         public string StudentId { get; set; }

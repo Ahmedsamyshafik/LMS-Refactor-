@@ -6,8 +6,8 @@ namespace LMS.Service.Abstract
 	{
 		Task<string> Add(Quiz quiz);
 		List<Quiz> GetAllByCourseId(int courseId);
-		Quiz Get(int Id);
-		int CalcMcq(Quiz quiz, string userId, List<int> selectedAnswers);
+		Quiz? Get(int Id);
+		int CalcMcq(Quiz quiz, string userId, List<int?>? selectedAnswers);
 
 	}
 }

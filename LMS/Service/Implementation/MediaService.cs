@@ -20,10 +20,26 @@ namespace LMS.Service.Implementation
 		#region Handle Functions
 		public async Task<string> UploadImage(IFormFile imageFile, string folderName)
 		{
-			// Create a unique file name for the image
-			var fileName = Path.GetFileNameWithoutExtension(imageFile.FileName);
-			var extension = Path.GetExtension(imageFile.FileName);
-			var uniqueFileName = $"{fileName}_{Guid.NewGuid()}{extension}";
+			// Create a unique file name for the image. The client name only ever contributes a readable
+			// prefix: separators, traversal segments and odd extensions are dropped before it reaches disk.
+			var clientName = Path.GetFileNameWithoutExtension(imageFile.FileName ?? string.Empty);
+			var extension = Path.GetExtension(imageFile.FileName ?? string.Empty).ToLowerInvariant();
+
+			var safeName = string.Concat(clientName.Where(c => !Path.GetInvalidFileNameChars().Contains(c))).Trim('.', ' ');
+			if (safeName.Length > 40)
+			{
+				safeName = safeName.Substring(0, 40);
+			}
+			if (safeName.Length == 0)
+			{
+				safeName = "file";
+			}
+
+			var hasSafeExtension = extension.Length is > 1 and <= 11
+				&& extension.Skip(1).All(char.IsLetterOrDigit);
+			var uniqueFileName = hasSafeExtension
+				? $"{safeName}_{Guid.NewGuid()}{extension}"
+				: $"{safeName}_{Guid.NewGuid()}";
 
 			// Get the path to the "uploads" folder in the wwwroot directory
 			var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, $"assets/images/{folderName}");

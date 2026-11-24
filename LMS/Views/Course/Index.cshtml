@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<LMS.Models.Entities.Video>
-
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _usermanager
 
 @{
     ViewData["Title"] = "CoursePage";
@@ -22,8 +24,6 @@
     <title>فيدوهات</title>
 </head>
 <body>
-
-    @* البتاعه المدوره *@
     <nav class="menu">
         <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open" placeholder="..">
         <label class="menu-open-button" for="menu-open">
@@ -31,12 +31,33 @@
             <span class="lines line-2"></span>
             <span class="lines line-3"></span>
         </label>
-        <a asp-action="GetAll" asp-controller="material" asp-route-id="@ViewBag.CourseId"  class="menu-item gray"> <i class="fa-regular fa-file-pdf"></i> </a>
-        <a asp-action="Add" asp-controller="Quiz" asp-route-id="@ViewBag.CourseId" class="menu-item gray"> <i class="fa-solid fa-pen"></i> </a>
-       
-        <a asp-action="index" asp-controller="material"  asp-route-id="@ViewBag.CourseId"  class="menu-item gray"> <i class="fa-solid fa-person-circle-question"></i></a>
+        @{
+            if (User.Identity.IsAuthenticated)
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var uId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var user = await _usermanager.FindByIdAsync(uId);
+                if (user != null)
+                {
+                    if (await _usermanager.IsInRoleAsync(user, "Admin"))
+                    {
+                        <a asp-action="Add" asp-controller="Quiz" asp-route-id="@ViewBag.CourseId" class="menu-item gray"> <i class="fa-solid fa-pen"></i> </a>
+                        <a asp-action="index" asp-controller="material" asp-route-id="@ViewBag.CourseId" class="menu-item gray"> <i class="fa-solid fa-person-circle-question"></i></a>
+
+                    }
+
+                }
+
+            }
+        }
+        <a asp-action="GetAll" asp-controller="material" asp-route-id="@ViewBag.CourseId" class="menu-item gray"> <i class="fa-regular fa-file-pdf"></i> </a>
+
         <a asp-action="GetAll" asp-controller="Quiz" asp-route-id="@ViewBag.CourseId" class="menu-item gray"><i class="fa-solid fa-file-lines"></i></a>
     </nav>
+
+
+
+
 
     <partial name="partial/_AddVideo" />
 
@@ -53,9 +74,26 @@
                     <div class="links">
                         <h1>@vid.Name</h1>
 
-                        <button onclick="openVideo('@vid.VideoPath')">Open Video</button>
+                        <a class="btn btn-warning" type="submit" asp-action="DisplayVideo" asp-controller="Course" asp-route-id="@vid.Id">Open Video</a>
                         @*Hidden just for admin*@
-                        <button type="submit" asp-action="Delete" asp-controller="Video" asp-route-id="@vid.Id" class="btn btn-danger">Delete</button>
+                        @{
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                                var uId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                                var user = await _usermanager.FindByIdAsync(uId);
+                                if (user != null)
+                                {
+                                    if (await _usermanager.IsInRoleAsync(user, "Admin"))
+                                    {
+                                        <button type="submit" asp-action="Delete" asp-controller="Video" asp-route-id="@vid.Id" class="btn btn-danger">Delete</button>
+
+                                    }
+
+                                }
+
+                            }
+                        }
                     </div>
                 }
             </div>

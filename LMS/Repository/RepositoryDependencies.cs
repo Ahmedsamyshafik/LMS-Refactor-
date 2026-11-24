@@ -9,6 +9,8 @@ namespace LMS.Repository
         public static IServiceCollection AddRepositoryDependencies(this IServiceCollection services)
         {
             //entities repos
+            //   services.AddTransient
+            // services.AddSingleton     
             services.AddScoped<ICourseRepo, CourseRepo>();
             services.AddScoped<ICourseRequestRepo, CourseRequestRepo>();
             services.AddScoped<ICourseStudentRepo, CourseStudentRepo>();

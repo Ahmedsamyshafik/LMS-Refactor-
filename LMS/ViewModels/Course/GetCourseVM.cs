@@ -10,6 +10,7 @@
         public string? Description { get; set; }
 
         public bool CanEnroll { get; set; }
+        public string CanEnrollStuts { get; set; }
         public string imgPath { get; set; }
     }
 }

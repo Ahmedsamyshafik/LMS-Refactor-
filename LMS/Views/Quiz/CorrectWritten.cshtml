@@ -1,11 +1,17 @@
-﻿@model List<StudentQuiz>
+﻿@model LMS.ViewModels.QuizVM.CorrectWrittenVM
 
 @{
 	ViewData["Title"] = "Correcting";
 }
 
 <h1>Correcting</h1>
-<form method="post" >
+
+@if (TempData["QuizMessage"] is string message)
+{
+	<div role="status" class="alert alert-info">@message</div>
+}
+
+<form method="post" asp-action="CorrectWritten" asp-route-id="@Model.CourseId">
 	<table class="table table-bordered table-striped" style="width:90%">
 		<thead>
 			<tr>
@@ -28,40 +34,38 @@
 
 		</thead>
 		<tbody>
-			@if (Model.Count > 0)
+			@if (Model.Attempts.Count > 0)
 			{
-				@for (var i = 0; i < Model.Count(); i++)
+				@for (var i = 0; i < Model.Attempts.Count; i++)
 				{
 					<tr>
 						<td width="20%">
-							<input asp-for="@Model.ElementAt(i).Student.Name" name="correctquiz[@i].Student.Name" disabled>
-							<input asp-for="@Model.ElementAt(i).Student.Name" name="correctquiz[@i].Student.Name" hidden>
-
+							<input type="hidden" name="correctquiz[@i].Id" value="@Model.Attempts[i].Id" />
+							@Model.Attempts[i].StudentName
 						</td>
 						<td width="20%">
-							<input asp-for="@Model.ElementAt(i).Quiz.Name" name="correctquiz[@i].Quiz.Name" disabled>
-							<input asp-for="@Model.ElementAt(i).Quiz.Name" name="correctquiz[@i].Quiz.Name" hidden>
-
-
+							@Model.Attempts[i].QuizName
 						</td>
 						<td width="20%">
-							<input asp-for="@Model.ElementAt(i).Id" name="correctquiz[@i].Id" hidden>
-							<input asp-for="@Model.ElementAt(i).QuizId" name="correctquiz[@i].QuizId" hidden>
-							<input asp-for="@Model.ElementAt(i).CourseId" name="correctquiz[@i].CourseId" hidden>
-							<input asp-for="@Model.ElementAt(i).StudentAnswerPath" name="correctquiz[@i].StudentAnswerPath" hidden>
-							<input asp-for="@Model.ElementAt(i).StudentId" name="correctquiz[@i].StudentId" hidden>
-							<a asp-action="DisplayPdf" asp-route-id="@Model.ElementAt(i).Id">FILE</a>
+							<a asp-action="DisplayPdf" asp-route-id="@Model.Attempts[i].Id">FILE</a>
 						</td>
 						<td width="20%">
-							<input asp-for="@Model.ElementAt(i).ExamDegree" name="correctquiz[@i].ExamDegree">
+							<label class="visually-hidden" for="examDegree-@Model.Attempts[i].Id">درجة الطالب @Model.Attempts[i].StudentName</label>
+							<input type="number" id="examDegree-@Model.Attempts[i].Id" name="correctquiz[@i].ExamDegree" value="@Model.Attempts[i].ExamDegree" class="form-control" min="0" />
 						</td>
 						<td width="20%">
-							<input asp-for="@Model.ElementAt(i).MaxDegree" name="correctquiz[@i].MaxDegree">
-
+							<label class="visually-hidden" for="maxDegree-@Model.Attempts[i].Id">الدرجة العظمى لمحاولة @Model.Attempts[i].QuizName</label>
+							<input type="number" id="maxDegree-@Model.Attempts[i].Id" name="correctquiz[@i].MaxDegree" value="@Model.Attempts[i].MaxDegree" class="form-control" min="0" />
 						</td>
 					</tr>
 				}
 
+			}
+			else
+			{
+				<tr>
+					<td colspan="5">لا توجد محاولات مقالية مُسلَّمة لهذه المادة.</td>
+				</tr>
 			}
 		</tbody>
 	</table>

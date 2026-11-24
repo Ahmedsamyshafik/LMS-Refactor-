@@ -1,0 +1,37 @@
+@model LMS.ViewModels.QuizVM.ExamResultVM
+@{
+	ViewData["Title"] = "ExamResult";
+}
+
+<div class="container py-4">
+	<h1>@Model.Quiz.Name</h1>
+
+	@if (TempData["QuizMessage"] is string message)
+	{
+		<p role="status" class="alert alert-info">@message</p>
+	}
+
+	@if (Model.IsWrittenExam)
+	{
+		<p>Answer file: <a asp-action="DisplayPdf" asp-controller="Quiz" asp-route-id="@Model.Attempt.Id">view my submission</a></p>
+
+		if (Model.IsAwaitingCorrection)
+		{
+			<p>Your answer was received and is waiting for correction.</p>
+		}
+		else
+		{
+			<p>Degree: <strong>@Model.Attempt.ExamDegree / @Model.Attempt.MaxDegree</strong></p>
+		}
+	}
+	else
+	{
+		<p>Degree: <strong>@Model.Attempt.ExamDegree / @Model.Attempt.MaxDegree</strong></p>
+	}
+
+	<p class="text-muted">
+		Submitted at @Model.Attempt.SubmittedAtUtc?.ToString("yyyy-MM-dd HH:mm") (UTC)
+	</p>
+
+	<a asp-action="GetAll" asp-controller="Quiz" asp-route-id="@Model.Quiz.courseId" class="btn btn-primary">Back to exams</a>
+</div>

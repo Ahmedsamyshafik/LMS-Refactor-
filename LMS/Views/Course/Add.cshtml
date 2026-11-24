@@ -3,21 +3,23 @@
     ViewData["Title"] = "Add";
 }
 
-<h1>Add</h1>
+<h1>Add New Course</h1>
+<link rel="stylesheet" href="~/css/login.css">
 
 <div class="container">
 
     <form method="post" enctype="multipart/form-data">
 
         <input type="file" asp-for="@Model.file" name="file" class="form-control rounded-4 fileInput" placeholder="ve" required>
-
+        <br />
         <div class="input-box">
             <input type="text" asp-for="@Model.Name" name="Name" class="title " placeholder="Course Name" required>
 
 
         </div>
+        <br />
         <div class="input-box">
-            <textarea type="text" asp-for="@Model.Description" name="Description" class="title " placeholder="Course Name" required></textarea>
+            <input type="text" asp-for="@Model.Description" name="Description" class="title" placeholder="Course Description" required></input>
 
 
         </div>
@@ -26,6 +28,7 @@
             <input type="text" class="price" asp-for="@Model.Price" name="Price" placeholder="Price" required>
 
         </div>
-        <button type="submit" class="btn"> Add </button>
+        <br />
+        <button type="submit" class="btn btn-primary" > Add </button>
     </form>
 </div>

@@ -26,7 +26,7 @@ namespace LMS.Service.Implementation
 		public async Task<string> Add(MaterialVM material)
 		{
 			var res = new Material();
-			if (material.file.Length > 0)
+			if (material.file is { Length: > 0 })
 			{
 				string url = await _mediaService.UploadImage(material.file, Constants.Material);
 				res.PdfPath = url;

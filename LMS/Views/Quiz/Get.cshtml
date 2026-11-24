@@ -1,11 +1,7 @@
-﻿@{
+﻿@model LMS.ViewModels.QuizVM.TakeExamVM
+@{
 	ViewData["Title"] = "TakeQuiz";
-	DateTime endTime = (DateTime)ViewBag.EndTime;
-	TimeSpan remainingTime = endTime - DateTime.Now;
-	// No Change?
 }
-
-@model LMS.Models.Entities.Quiz
 
 <head>
 	<meta charset="UTF-8">
@@ -20,7 +16,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="~/css/bootstrap.min.css">
 	<link rel="stylesheet" href="~/css/bootstrap.min.css.map">
-	<title>@Model.Name</title>
+	<title>@Model.Quiz.Name</title>
 </head>
 <div class="loader">
 	<div class="parent-load">
@@ -33,29 +29,23 @@
 	</div>
 
 	<div class="parent-time">
-		<h1> @Model.Name</h1>
-		<p> <span id="countdown">@remainingTime.ToString(@"hh\:mm\:ss")</span></p>
+		<h1> @Model.Quiz.Name</h1>
+		<p> <span id="countdown" role="timer" aria-live="polite" aria-label="الوقت المتبقي للامتحان">@Model.CountdownText</span></p>
 
 	</div>
 </div>
 
-@if ( Model.FilePath!=null)
+@if (Model.IsWrittenExam)
 {
-	<form method="post" asp-action="SubmitWritten" asp-route-id="@Model.Id" enctype="multipart/form-data">
+	<form id="examForm" class="container py-3" method="post" asp-action="SubmitWritten" asp-controller="Quiz" asp-route-id="@Model.Quiz.Id" enctype="multipart/form-data">
 
 		<div class="pdf-container container" style="width: 100%; height: 100vh;">
-			<embed src="~/@Model.FilePath" type="application/pdf" width="100%" height="100%">
+			<embed src="~/@Model.Quiz.FilePath" type="application/pdf" width="100%" height="100%">
 		</div>
-		<form class="container py-3">
-			<label for="File">File:</label>
-			<input type="File" id="File" name="File" class="form-control rounded-2" required />
-			<button type="submit" class="btn btn-info">Submit</button>
-			
-		</form>
 
-		<input asp-for="@Model.Id" name="Id" hidden class="form-control" required />
-
-		<br>
+		<label for="File">File:</label>
+		<input type="file" id="File" name="File" class="form-control rounded-2" accept="application/pdf" required />
+		<button type="submit" class="btn btn-info">Submit</button>
 
 	</form>
 	<br />
@@ -64,29 +54,29 @@
 }
 else
 {
-	<form method="post" asp-action="Submit" asp-controller="Quiz">
+	var questions = Model.Quiz.Questions.ToList();
+	<form id="examForm" method="post" asp-action="Submit" asp-controller="Quiz">
 
-		@for (int i = 0; i < Model.Questions.ToList().Count; i++)
+		@for (int i = 0; i < questions.Count; i++)
 		{
-			<div class="pre">
-				<p>@Model.Questions.ToList()[i].Text</p>
+			<fieldset class="pre">
+				<legend>@questions[i].Text</legend>
 				<div class="pre">
-					<label>
-						@for (int j = 0; j < Model.Questions.ToList()[i].Options.Count; j++)
-						{
-							<input type="radio" name="selectedAnswers[@i]" value="@j" /> @Model.Questions.ToList()[i].Options.ToList()[j].Text
-							<br />
-						}
-					</label>
-					<br>
+					@for (int j = 0; j < questions[i].Options.Count; j++)
+					{
+						<label>
+							<input type="radio" name="selectedAnswers[@i]" value="@j" /> @questions[i].Options.ToList()[j].Text
+						</label>
+						<br />
+					}
 				</div>
-			</div>
+			</fieldset>
 		}
 
 		<div class="submit text-center">
 			<input type="submit" value="Submit">
 		</div>
-		<input type="hidden" name="quizId" value="@Model.Id" />
+		<input type="hidden" name="quizId" value="@Model.Quiz.Id" />
 	</form>
 }
 
@@ -94,63 +84,37 @@ else
 
 
 <script>
-	// Function to set a cookie
-	function setCookie(name, value, days) {
-		var expires = "";
-		if (days) {
-			var date = new Date();
-			date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-			expires = "; expires=" + date.toUTCString();
+	// The server owns the clock: it sends the seconds left when the page was rendered and checks them
+	// again when the answers arrive, so a wrong device time zone can no longer end the exam early.
+	(function () {
+		var remainingSeconds = @Model.RemainingSeconds;
+		var deadline = Date.now() + (remainingSeconds * 1000);
+		var countdown = document.getElementById('countdown');
+		var form = document.getElementById('examForm');
+		var submitting = false;
+
+		function pad(value) { return value < 10 ? '0' + value : '' + value; }
+
+		function render() {
+			var left = Math.ceil((deadline - Date.now()) / 1000);
+			if (left < 0) { left = 0; }
+			countdown.textContent = pad(Math.floor(left / 3600)) + ':' + pad(Math.floor((left % 3600) / 60)) + ':' + pad(left % 60);
+			return left;
 		}
-		document.cookie = name + "=" + (value || "") + expires + "; path=/";
-	}
 
-	// Function to get a cookie value
-	function getCookie(name) {
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';');
-		for (var i = 0; i < ca.length; i++) {
-			var c = ca[i];
-			while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+		function tick() {
+			if (submitting) { return; }
+			if (render() === 0) {
+				submitting = true;
+				// A written exam with no uploaded file must still reach the server so it can close the attempt.
+				var file = document.getElementById('File');
+				if (file) { file.required = false; }
+				form.submit();
+				return;
+			}
 		}
-		return null;
-	}
 
-	// Countdown timer
-	function updateCountdown() {
-		var now = new Date();
-		var endTime = new Date('@endTime');
-		var remainingTime = endTime - now;
-
-		if (remainingTime <= 0) {
-			// Time is up, submit the form
-			document.forms[0].submit();
-		} else {
-			// Update the countdown display
-			var hours = Math.floor(remainingTime / 3600000);
-			var minutes = Math.floor((remainingTime % 3600000) / 60000);
-			var seconds = Math.floor((remainingTime % 60000) / 1000);
-			document.getElementById('countdown').textContent = hours + ':' + minutes + ':' + seconds;
-
-			// Save remaining time to a cookie
-			setCookie('remainingTime', remainingTime, 1);
-		}
-	}
-
-	// Check if remaining time is stored in a cookie
-	var storedRemainingTime = getCookie('remainingTime');
-	if (storedRemainingTime) {
-		// Use stored remaining time if available
-		var now = new Date();
-		var endTime = new Date('@endTime');
-		var storedEndTime = new Date(now.getTime() + parseInt(storedRemainingTime));
-		if (storedEndTime <= endTime) {
-			// Update the remaining time with the stored value
-			endTime = storedEndTime;
-		}
-	}
-
-	// Update the countdown every second
-	setInterval(updateCountdown, 1000);
+		render();
+		setInterval(tick, 1000);
+	})();
 </script>

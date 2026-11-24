@@ -1,4 +1,5 @@
-﻿using LMS.Models.Entities;
+﻿using LMS.Helper;
+using LMS.Models.Entities;
 using LMS.Service.Abstract;
 using LMS.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +25,8 @@ namespace LMS.Service.Implementation
 
         public async Task<string> RegisterAsync(RegisterVM registerVM)
         {
+            //check for duplicated name or email or phone?
+
             //AppUser
             var user = new ApplicationUser()
             {
@@ -44,6 +47,10 @@ namespace LMS.Service.Implementation
                 }
                 return err;
             }
+            //Self service registration can only ever produce a learner; Admin and Teacher are granted
+            //deliberately, never from a public form.
+            await _userManager.AddToRoleAsync(user, Constants.StudentRole);
+
             return "Success";
         }
 

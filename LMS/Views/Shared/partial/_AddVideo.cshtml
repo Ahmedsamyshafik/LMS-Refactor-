@@ -1,18 +1,36 @@
-﻿
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _usermanager
 
+@{
+    if (User.Identity.IsAuthenticated)
+    {
+        var claimsIdentity = (ClaimsIdentity)User.Identity;
+        var uId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var user = await _usermanager.FindByIdAsync(uId);
+        if (user != null)
+        {
+            if (await _usermanager.IsInRoleAsync(user, "Admin"))
+            {
+                <div class="add">
+                    <i class="fa-solid fa-circle-plus text-dark"></i>
+                    <form method="post" enctype="multipart/form-data" asp-controller="Video" asp-action="Add">
 
-<div class="add">
-	<i class="fa-solid fa-circle-plus text-dark"></i>
-	<form method="post" enctype="multipart/form-data" asp-controller="Video" asp-action="Add">
-		
-		<div>
-			<input name="Name" class="link" placeholder="write video Name" required>
-			<input name="VideoPath" class="link" placeholder="put video url" required>
-			<input type="text" value="@ViewBag.CourseId" name="CourseId" hidden>
-			<button type="submit" id="saveButton" class="btn"> Add IN Page</button>
-		</div>
-	</form>
+                        <div>
+                            <input name="Name" class="link" placeholder="write video Name" required>
+                            <input name="VideoPath" class="link" placeholder="put video url" required>
+                            <input type="text" value="@ViewBag.CourseId" name="CourseId" hidden>
+                            <button type="submit" id="saveButton" class="btn"> Add IN Page</button>
+                        </div>
+                    </form>
 
-</div>
+                </div>
+
+            }
+
+        }
+
+    }
+}
 
 <script src="~/js/coll-vedio.js"></script>

@@ -1,4 +1,5 @@
 ﻿using LMS.Service.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -19,7 +20,8 @@ namespace LMS.Controllers
         #endregion
 
         #region Actions
-        //  [HttpPost]
+        [Authorize]
+
         public async Task<IActionResult> Enroll(int id)//course id
         {
             var userId = GetUserId();
@@ -34,19 +36,38 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var CR = await _courseRequestService.GetAll();
             return View(CR);
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
             string res = await _courseRequestService.Delete(id);
             //check res
             return RedirectToAction("GetAll");
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Accept(int id)
         {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
             string res = await _courseRequestService.Accept(id);
             //check res
             return RedirectToAction("GetAll");

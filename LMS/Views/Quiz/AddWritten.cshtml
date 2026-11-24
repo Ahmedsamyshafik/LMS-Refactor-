@@ -21,9 +21,13 @@
 </head>
 <body>
     <form class="addQuiz" method="post"  enctype="multipart/form-data">
-        <input type="file" asp-for="@Model.file" name="file" class="form-control" placeholder="ve" accept="application/pdf">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <label for="file">ملزمة الامتحان (PDF فقط):</label>
+        <input type="file" asp-for="@Model.file" name="file" class="form-control" placeholder="ve" accept="application/pdf" required>
         <input type="text" asp-for="@Model.Name" name="Name" class="rounded-2 form-control" placeholder="File Name">
         <input type="text" asp-for="@Model.description" name="description" class="rounded-2 form-control" placeholder="File Description">
+        <label for="durationMinutes">مدة الامتحان (بالدقائق):</label>
+        <input type="number" id="durationMinutes" asp-for="@Model.DurationMinutes" name="DurationMinutes" class="form-control" min="1" max="600" required />
         <input asp-for="@Model.CourseId" name="CourseId" hidden />
      
         

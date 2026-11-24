@@ -1,7 +1,9 @@
-﻿using LMS.Models.Entities;
+﻿using LMS.Helper;
+using LMS.Models.Entities;
 using LMS.Repository.EntityRepos.IRepo;
 using LMS.Service.Abstract;
 using LMS.ViewModels.CourseRequest;
+using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Service.Implementation
 {
@@ -46,9 +48,11 @@ namespace LMS.Service.Implementation
                 var temp = new GetAllCoursesRequestsVM()
                 {
                     Id = item.Id,
-                    CourseName = course.Name,
-                    CoursePrice = course.Price.ToString(),
+                    CourseId = item.CourseId,
+                    CourseName = course?.Name ?? string.Empty,
+                    CoursePrice = course == null ? string.Empty : PriceFormatter.Format(course.Price),
                     StudentName = await _authService.GetUserNameById(item.UserId),
+                    StudentId = item.UserId,
                     Time = item.Time,
 
                 };
@@ -56,6 +60,38 @@ namespace LMS.Service.Implementation
 
             }
             return result;
+        }
+
+        /// <summary>
+        /// Courses one student is enrolled in, resolved in the database. The navigation menus use it so a
+        /// learner only gets links for their own courses instead of a list built from exam attempts.
+        /// </summary>
+        public List<GetAllCoursesRequestsVM> GetByStudentId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new List<GetAllCoursesRequestsVM>();
+            }
+
+            return _courseStudentRepo.GetTableNoTracking()
+                .Include(x => x.Course)
+                .Where(x => x.UserId == userId)
+                .OrderBy(x => x.Id)
+                .Select(x => new GetAllCoursesRequestsVM
+                {
+                    Id = x.Id,
+                    CourseId = x.CourseId,
+                    CourseName = x.Course.Name,
+                    CoursePrice = PriceFormatter.Format(x.Course.Price),
+                    StudentId = x.UserId,
+                    Time = x.Time
+                })
+                .ToList();
+        }
+
+        public async Task<CourseStudent> GetById(int id)
+        {
+            return await _courseStudentRepo.GetByIdAsync(id);
         }
 
         public int GetStudentsCountInCourseById(int id)
